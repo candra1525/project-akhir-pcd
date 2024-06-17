@@ -1,4 +1,14 @@
 <resources>
     <string name="app_name">pcd-akhir-android</string>
     <string name="splash_screen_title">pcd-akhir-android</string>
+    <string name="image_preview">Image Preview</string>
+    <string name="what_would_you_like_to_do_today">What would you like to do today?</string>
+    <string name="greetings">Greetings!</string>
+    <string name="garbage_image_nclassifier">Garbage Image Classifier</string>
+    <string name="garbage_photo_classification">Garbage Photo Classification</string>
+    <string name="logo_camera">logo_camera</string>
+    <string name="camera">Camera</string>
+    <string name="gallery_icon">gallery_icon</string>
+    <string name="gallery">Gallery</string>
+    <string name="classify_garbage">Classify Garbage</string>
 </resources>

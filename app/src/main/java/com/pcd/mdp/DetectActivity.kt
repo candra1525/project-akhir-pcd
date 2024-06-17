@@ -41,6 +41,10 @@ class DetectActivity : AppCompatActivity() {
         if (!allPermissionsGranted()) {
             requestPermissionLauncher.launch(REQUIRED_PERMISSION)
         }
+
+        binding.backToMainFromClassification.setOnClickListener{
+            finish()
+        }
     }
 
     private val requestPermissionLauncher = registerForActivityResult(
