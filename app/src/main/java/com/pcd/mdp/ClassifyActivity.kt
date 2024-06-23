@@ -9,7 +9,6 @@ import android.graphics.Paint
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -27,6 +26,7 @@ import kotlin.math.sqrt
 class ClassifyActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityClassifyBinding
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,13 +83,14 @@ class ClassifyActivity : AppCompatActivity() {
         // Proses klasifikasi
         val result = classifyImage(this, bitmap)
         // Menampilkan hasil klasifikasi
-        binding.textClassify.text = "${resultImage(Integer.parseInt(result.first))} predictions with a confidence level of ${result.second}"
+        binding.textClassify.text =
+            "${resultImage(Integer.parseInt(result.first))} predictions with a confidence level of ${result.second}"
 
         binding.histogramImage.setImageBitmap(computeHistogram(bitmap))
 
     }
 
-    private fun resultImage(result : Int) : String{
+    private fun resultImage(result: Int): String {
         if (result == 0) {
             return "Cardboard"
         } else if (result == 1) {
@@ -211,7 +212,11 @@ class ClassifyActivity : AppCompatActivity() {
         return grayScaleMatrix
     }
 
-    private fun computeGLCM(matrix: Array<IntArray>, distance: Int = 1, angle: Int = 0): Array<Array<Int>> {
+    private fun computeGLCM(
+        matrix: Array<IntArray>,
+        distance: Int = 1,
+        angle: Int = 0
+    ): Array<Array<Int>> {
         val size = 256 // Assuming 8-bit grayscale images
         val glcm = Array(size) { Array(size) { 0 } }
 
