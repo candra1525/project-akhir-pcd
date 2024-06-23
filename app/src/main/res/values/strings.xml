@@ -11,4 +11,6 @@
     <string name="gallery_icon">gallery_icon</string>
     <string name="gallery">Gallery</string>
     <string name="classify_garbage">Classify Garbage</string>
+    <string name="classification_garbage">Classification Garbage</string>
+    <string name="classify_image">Classify Image</string>
 </resources>

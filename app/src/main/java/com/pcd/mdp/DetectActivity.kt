@@ -1,6 +1,7 @@
 package com.pcd.mdp
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -15,7 +16,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.pcd.mdp.databinding.ActivityDetectBinding
-import com.pcd.mdp.databinding.ActivityMainBinding
 
 class DetectActivity : AppCompatActivity() {
 
@@ -32,7 +32,7 @@ class DetectActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        binding.btnCamera.setOnClickListener{
+        binding.btnCamera.setOnClickListener {
             startCamera()
         }
         binding.btnGallery.setOnClickListener {
@@ -42,8 +42,14 @@ class DetectActivity : AppCompatActivity() {
             requestPermissionLauncher.launch(REQUIRED_PERMISSION)
         }
 
-        binding.backToMainFromClassification.setOnClickListener{
+        binding.backToMainFromClassification.setOnClickListener {
             finish()
+        }
+
+        binding.buttonClassifyGarbage.setOnClickListener {
+            val intent = Intent(this, ClassifyActivity::class.java)
+            intent.putExtra("GARBAGE_IMAGE", currentImageUri.toString())
+            startActivity(intent)
         }
     }
 

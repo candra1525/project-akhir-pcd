@@ -22,8 +22,12 @@
         android:theme="@style/Theme.Pcdakhirandroid"
         tools:targetApi="31">
         <activity
+            android:name=".ClassifyActivity"
+            android:exported="false" />
+        <activity
             android:name=".DetectActivity"
             android:exported="false" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -31,8 +35,9 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"/>
+                android:resource="@xml/file_paths" />
         </provider>
+
         <activity
             android:name=".MainActivity"
             android:exported="false" />
