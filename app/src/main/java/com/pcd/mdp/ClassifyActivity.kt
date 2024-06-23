@@ -3,7 +3,9 @@ package com.pcd.mdp
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Paint
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -73,33 +75,39 @@ class ClassifyActivity : AppCompatActivity() {
         val glcmFeatures = calculateGLCMFeatures(bitmap)
         binding.tvContrast.text = "Contrast : ${glcmFeatures.contrast}"
         binding.tvDissimilarity.text = "Dissimilarity : ${glcmFeatures.dissimilarity}"
-        binding.tvHomogeneity.text = "Homogeneity : ${glcmFeatures.homogeneity}"
+        binding.tvHomogeneity.text = "Homogenity : ${glcmFeatures.homogeneity}"
         binding.tvEnergy.text = "Energy : ${glcmFeatures.energy}"
         binding.tvCorrelation.text = "Correlation : ${glcmFeatures.correlation}"
         binding.tvAsm.text = "ASM : ${glcmFeatures.asm}"
 
         // Proses klasifikasi
         val result = classifyImage(this, bitmap)
-        Log.d("ClassifyActivity", result)
-        // Tampilkan hasil klasifikasi
-        if (result == "0") {
-            binding.textClassify.text = "Cardboard"
-        } else if (result == "1") {
-            binding.textClassify.text = "Glass"
-        } else if (result == "2") {
-            binding.textClassify.text = "Metal"
-        } else if (result == "3") {
-            binding.textClassify.text = "Paper"
-        } else if (result == "4") {
-            binding.textClassify.text = "Plastic"
+        // Menampilkan hasil klasifikasi
+        binding.textClassify.text = "${resultImage(Integer.parseInt(result.first))} predictions with a confidence level of ${result.second}"
+
+        binding.histogramImage.setImageBitmap(computeHistogram(bitmap))
+
+    }
+
+    private fun resultImage(result : Int) : String{
+        if (result == 0) {
+            return "Cardboard"
+        } else if (result == 1) {
+            return "Glass"
+        } else if (result == 2) {
+            return "Metal"
+        } else if (result == 3) {
+            return "Paper"
+        } else if (result == 4) {
+            return "Plastic"
         } else {
-            binding.textClassify.text = "Tidak Diketahui"
+            return "Tidak Diketahui"
         }
     }
 
 
     // Fungsi untuk mengklasifikasikan gambar
-    private fun classifyImage(context: Context, bitmap: Bitmap): String {
+    private fun classifyImage(context: Context, bitmap: Bitmap): Pair<String, Float> {
         // Load the model
         val model = SvmGarbageModel70.newInstance(context)
 
@@ -128,12 +136,14 @@ class ClassifyActivity : AppCompatActivity() {
         // Get the predicted class
         val scores = outputFeature0.floatArray
         val maxScoreIndex = scores.indices.maxByOrNull { scores[it] } ?: -1
+        val maxScore = if (maxScoreIndex != -1) scores[maxScoreIndex] else 0.0f
 
         // Releases model resources if no longer used
         model.close()
 
-        return "$maxScoreIndex"
+        return Pair("$maxScoreIndex", maxScore)
     }
+
 
     // Convert To GrayScale
     private fun toGrayscale(src: Bitmap): Bitmap {
@@ -339,5 +349,46 @@ class ClassifyActivity : AppCompatActivity() {
         }
 
         return ColorMoments(mean, variance, skewness)
+    }
+
+    private fun computeHistogram(bitmap: Bitmap): Bitmap {
+        val width = 256
+        val height = 200
+        val histogramBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(histogramBitmap)
+        val paint = Paint()
+        val red = IntArray(256)
+        val green = IntArray(256)
+        val blue = IntArray(256)
+
+        // Calculate histogram
+        for (x in 0 until bitmap.width) {
+            for (y in 0 until bitmap.height) {
+                val pixel = bitmap.getPixel(x, y)
+                red[Color.red(pixel)]++
+                green[Color.green(pixel)]++
+                blue[Color.blue(pixel)]++
+            }
+        }
+
+        val maxRed = red.maxOrNull() ?: 1
+        val maxGreen = green.maxOrNull() ?: 1
+        val maxBlue = blue.maxOrNull() ?: 1
+
+        // Normalize and draw histogram
+        for (i in 0 until 256) {
+            val redHeight = (red[i] * height / maxRed).toFloat()
+            val greenHeight = (green[i] * height / maxGreen).toFloat()
+            val blueHeight = (blue[i] * height / maxBlue).toFloat()
+
+            paint.color = Color.RED
+            canvas.drawLine(i.toFloat(), height.toFloat(), i.toFloat(), height - redHeight, paint)
+            paint.color = Color.GREEN
+            canvas.drawLine(i.toFloat(), height.toFloat(), i.toFloat(), height - greenHeight, paint)
+            paint.color = Color.BLUE
+            canvas.drawLine(i.toFloat(), height.toFloat(), i.toFloat(), height - blueHeight, paint)
+        }
+
+        return histogramBitmap
     }
 }
